@@ -1,4 +1,4 @@
-package com.example.upush.ui.theme
+package com.escom.UPush.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

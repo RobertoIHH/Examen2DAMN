@@ -12,23 +12,35 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UPush"
         tools:targetApi="31">
+
         <service android:name=".MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.UPush">
+            android:theme="@style/Theme.UPush.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".AdminRegisterActivity" />
+        <activity android:name=".UserActivity" />
+        <activity android:name=".AdminActivity" />
+        <activity android:name=".SendNotificationActivity" />
+        <activity android:name=".NotificationsActivity" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.upush
+package com.escom.UPush
 
 import org.junit.Test
 
