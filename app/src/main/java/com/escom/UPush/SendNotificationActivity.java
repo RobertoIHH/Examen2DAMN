@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.functions.FirebaseFunctions;
 import java.util.ArrayList;
@@ -111,25 +112,35 @@ public class SendNotificationActivity extends AppCompatActivity {
     }
 
     private void sendNotificationToRecipients(List<String> recipientIds, Map<String, Object> notificationData) {
-        FirebaseFunctions functions = FirebaseFunctions.getInstance();
+        // Crear un contador para llevar registro de las operaciones completadas
+        final int[] successCount = {0};
+        final int totalRecipients = recipientIds.size();
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("recipientIds", recipientIds);
-        data.put("title", notificationData.get("title"));
-        data.put("body", notificationData.get("body"));
+        // Guardar las notificaciones directamente en Firebase Realtime Database
+        for (String userId : recipientIds) {
+            DatabaseReference notificationRef = FirebaseDatabase.getInstance()
+                    .getReference("notifications").child(userId).push();
 
-        functions.getHttpsCallable("sendNotification")
-                .call(data)
-                .addOnSuccessListener(result -> {
-                    Toast.makeText(SendNotificationActivity.this,
-                            "Notificaciones enviadas correctamente",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(SendNotificationActivity.this,
-                            "Error al enviar notificaciones: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                });
+            Map<String, Object> notificationDataWithTimestamp = new HashMap<>(notificationData);
+            notificationDataWithTimestamp.put("timestamp", ServerValue.TIMESTAMP);
+
+            notificationRef.setValue(notificationDataWithTimestamp)
+                    .addOnSuccessListener(aVoid -> {
+                        successCount[0]++;
+
+                        // Si todas las notificaciones se han guardado, mostrar mensaje de éxito
+                        if (successCount[0] == totalRecipients) {
+                            Toast.makeText(SendNotificationActivity.this,
+                                    "Notificaciones guardadas correctamente",
+                                    Toast.LENGTH_SHORT).show();
+                            finish(); // Cerrar la actividad tras éxito
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(SendNotificationActivity.this,
+                                "Error al guardar notificaciones: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
+        }
     }
 }
