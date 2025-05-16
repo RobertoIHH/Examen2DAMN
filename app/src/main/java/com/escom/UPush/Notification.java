@@ -1,3 +1,4 @@
+package com.escom.UPush;
 public class Notification {
     private String id;
     private String title;

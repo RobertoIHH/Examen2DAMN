@@ -1,3 +1,15 @@
+package com.escom.UPush;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.util.HashMap;
+import java.util.Map;
 public class AdminRegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailEditText, passwordEditText, nameEditText, masterPasswordEditText;

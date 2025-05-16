@@ -1,3 +1,4 @@
+package com.escom.UPush;
 public class User {
     private String id;
     private String name;
