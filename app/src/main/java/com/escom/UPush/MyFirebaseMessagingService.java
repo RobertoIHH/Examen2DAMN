@@ -6,9 +6,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -92,6 +97,43 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("tokens")
                     .child(currentUser.getUid());
             tokenRef.setValue(token);
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Escuchar cambios en la base de datos de notificaciones para el usuario actual
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference notificationsRef = FirebaseDatabase.getInstance()
+                    .getReference("notifications").child(userId);
+
+            notificationsRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+                    if (snapshot.exists()) {
+                        Notification notification = snapshot.getValue(Notification.class);
+                        if (notification != null) {
+                            showNotification(notification.getTitle(), notification.getBody());
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {}
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {}
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            });
         }
     }
 }

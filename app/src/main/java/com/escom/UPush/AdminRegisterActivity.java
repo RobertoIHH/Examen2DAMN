@@ -2,12 +2,15 @@ package com.escom.UPush;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.util.HashMap;
 import java.util.Map;
 public class AdminRegisterActivity extends AppCompatActivity {
@@ -73,6 +76,31 @@ public class AdminRegisterActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(AdminRegisterActivity.this, "Error al guardar datos",
                             Toast.LENGTH_SHORT).show();
+                });
+    }
+    private void updateFCMToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("RegisterActivity", "Error al obtener token FCM", task.getException());
+                        return;
+                    }
+
+                    String token = task.getResult();
+                    String userId = mAuth.getCurrentUser().getUid();
+                    DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("tokens")
+                            .child(userId);
+                    tokenRef.setValue(token);
+                });
+    }
+    private void subscribeToNotificationsTopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic("notifications")
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("LoginActivity", "Error al suscribirse a notificaciones", task.getException());
+                        return;
+                    }
+                    Log.d("LoginActivity", "Suscrito al tema de notificaciones");
                 });
     }
 }

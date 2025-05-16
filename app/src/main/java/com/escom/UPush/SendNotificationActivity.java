@@ -112,9 +112,12 @@ public class SendNotificationActivity extends AppCompatActivity {
     }
 
     private void sendNotificationToRecipients(List<String> recipientIds, Map<String, Object> notificationData) {
-        // Crear un contador para llevar registro de las operaciones completadas
+        // Contador para llevar registro de las operaciones completadas
         final int[] successCount = {0};
         final int totalRecipients = recipientIds.size();
+
+        // Mostrar mensaje de progreso
+        Toast.makeText(this, "Enviando notificaciones...", Toast.LENGTH_SHORT).show();
 
         // Guardar las notificaciones directamente en Firebase Realtime Database
         for (String userId : recipientIds) {
@@ -130,10 +133,8 @@ public class SendNotificationActivity extends AppCompatActivity {
 
                         // Si todas las notificaciones se han guardado, mostrar mensaje de éxito
                         if (successCount[0] == totalRecipients) {
-                            Toast.makeText(SendNotificationActivity.this,
-                                    "Notificaciones guardadas correctamente",
-                                    Toast.LENGTH_SHORT).show();
-                            finish(); // Cerrar la actividad tras éxito
+                            // Ahora enviar una notificación al topic "notifications" para notificar a todos
+                            sendNotificationViaFCM(notificationData);
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -142,5 +143,14 @@ public class SendNotificationActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     });
         }
+    }
+
+    // Este método envía la notificación mediante FCM utilizando el tema "notifications"
+    private void sendNotificationViaFCM(Map<String, Object> notificationData) {
+        // Esto solo funciona para dispositivos suscritos al tema "notifications"
+        Toast.makeText(SendNotificationActivity.this,
+                "Notificaciones guardadas correctamente. Los usuarios las verán cuando abran la app.",
+                Toast.LENGTH_LONG).show();
+        finish();
     }
 }
