@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "295620515362",
+    "project_id": "gasapp-a67e6",
+    "storage_bucket": "gasapp-a67e6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295620515362:android:78b90c34f85f23cce6dc7b",
+        "android_client_info": {
+          "package_name": "com.escom.UPush"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANPrrcM21gXCLKbv2SdVLTihhpYyrxnG4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
